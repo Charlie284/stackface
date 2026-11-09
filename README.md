@@ -1,57 +1,33 @@
 # stackface
 
-**Your face, rendered in your stack.**
+Generate a tech-stack SVG portrait from a photo.
 
-Turn a photo into a GitHub-ready ASCII portrait where every glyph is a letter from your own tech stack — `python.react.aws.docker…` — with matching dark & light mode SVGs for your profile README.
+Built with Vite, React, TypeScript, Tailwind CSS, React Router, Framer Motion, and Lenis. Existing content and core interactions are preserved in React components; browser and canvas work uses TypeScript modules.
 
-**→ Try it live: [mittal-sahab-sudo.github.io/stackface](https://mittal-sahab-sudo.github.io/stackface/)**
+## Run
 
-## Why
+Use Node.js 24 or newer.
 
-I built [my GitHub profile README](https://github.com/mittal-sahab-sudo) this way and people kept asking how. So here's the generator — free, open source, no signup.
-
-## How it works
-
-Everything runs **100% in your browser**. Your photo never touches a server.
-
-1. **Background removal** — an ONNX segmentation model ([@imgly/background-removal](https://github.com/imgly/background-removal-js)) runs client-side via WASM to isolate you from the background
-2. **Glyph sampling** — the photo is downsampled to a character grid; each cell's luminance is auto-contrast-stretched and gamma-corrected, then quantized into 10 opacity buckets
-3. **Stack stream** — your keywords flow through the visible cells as one continuous string, so zoomed in, your face is literally made of your tools
-4. **Theme-aware output** — two SVGs are generated: *dark* maps bright pixels → bright glyphs (like a screen), *light* maps dark pixels → heavy ink (like newsprint). Glyph runs use `textLength` so the grid never drifts across fonts and platforms
-
-## Use it in your README
-
-Download both SVGs, drop them in an `assets/` folder in your `<username>/<username>` repo, and paste:
-
-```html
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="./assets/hero-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="./assets/hero-light.svg">
-  <img alt="my portrait, rendered in my tech stack" src="./assets/hero-dark.svg" width="60%">
-</picture>
+```sh
+npm ci
+npm run dev
 ```
 
-GitHub swaps dark/light automatically.
+## Check and build
 
-## Run / deploy your own
-
-It's a single `index.html` — no build step, no dependencies to install.
-
-```bash
-git clone https://github.com/mittal-sahab-sudo/stackface
-cd stackface
-python3 -m http.server   # open http://localhost:8000
+```sh
+npm run typecheck
+npm run build
 ```
 
-Deploy anywhere static files live: GitHub Pages, Vercel, Netlify, an S3 bucket.
+`npm run preview` serves the production build locally. Publish the contents of `dist/`. The build emits HTML entry aliases for the former `.html` URLs and clean route URLs, plus a `404.html` fallback. `_redirects` supports hosts that understand SPA rewrites.
 
-## Credits
+For a subdirectory deployment, set `VITE_BASE_PATH=/repository-name/` when building. Keep the trailing slash. React Router and local asset URLs use this base.
 
-Built by [Abhishek Mittal](https://mittalsahab.com) — full-stack engineer (Python · Next.js · AWS).
-Background removal by [@imgly/background-removal](https://github.com/imgly/background-removal-js) (loaded from CDN at runtime).
+Lenis smooth scrolling and Framer Motion page transitions respect reduced-motion preferences. Tailwind utilities are enabled without a reset so the original styling remains intact.
 
-If this made your profile cooler, a ⭐ helps more people find it.
+Background removal lazily downloads a browser model through `@imgly/background-removal`. If unavailable, generation continues without removal. The photo stays in this browser tab. The generated dark/light SVGs and README snippet can be downloaded.
 
 ## License
 
-MIT
+See [LICENSE](LICENSE).
